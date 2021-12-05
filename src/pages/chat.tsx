@@ -1,17 +1,46 @@
 import React from "react";
+import { useAppSelector, useAppDispatch } from "../app/hooks";
+import { Form, Field } from "react-final-form";
+
+// mui
 import { Container, Typography, TextField } from "@material-ui/core";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import { Form, Field } from "react-final-form";
+
+// model
+import { MessageModel } from "../models/ChatModel";
+
+// action,state
+import {
+  submitHitoshi,
+  submitMasatoshi,
+  selectChatHitoshi,
+  selectChatMasatoshi,
+} from "../slices/chatSlice";
 
 const Chat: React.FC = () => {
   const classes = useStyles();
+  const dispatch = useAppDispatch();
+  const chatHitoshi = useAppSelector(selectChatHitoshi);
+  const chatMasatoshi = useAppSelector(selectChatMasatoshi);
 
-  const handleSubmit = (values: { message: string }) => {
-    console.log(values);
+  const handleSubmitHitoshi = (
+    values: MessageModel,
+    form: Record<string, any>
+  ) => {
+    form.reset();
+    dispatch(submitHitoshi(values));
   };
-  
+
+  const handleSubmitMasatoshi = (
+    values: MessageModel,
+    form: Record<string, any>
+  ) => {
+    form.reset();
+    dispatch(submitMasatoshi(values));
+  };
+
   return (
     <React.Fragment>
       <Container>
@@ -23,24 +52,28 @@ const Chat: React.FC = () => {
             <Grid container item xs={12}>
               <Grid item xs={6}>
                 <Paper className={classes.paper} variant="outlined">
-                  ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。
+                  {chatHitoshi.map((item, index) => (
+                    <div key={index}>{item}</div>
+                  ))}
                 </Paper>
               </Grid>
               <Grid item xs={6}>
                 <Paper className={classes.paper} variant="outlined">
-                  ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。ここにチャット内容表示します。
+                  {chatMasatoshi.map((item, index) => (
+                    <div key={index}>{item}</div>
+                  ))}
                 </Paper>
               </Grid>
             </Grid>
             <Grid item xs={6}>
               <Form
-                onSubmit={handleSubmit}
-                render={({ handleSubmit, submitting, pristine }) => (
+                onSubmit={handleSubmitHitoshi}
+                render={({ handleSubmit, submitting, pristine, form }) => (
                   <form onSubmit={handleSubmit}>
                     <div>
                       <label>ひとしくんのメッセージ</label>
                       <Field
-                        name="messageHitoshi"
+                        name="message"
                         render={({ input }) => {
                           return (
                             <TextField
@@ -67,13 +100,13 @@ const Chat: React.FC = () => {
             </Grid>
             <Grid item xs={6}>
               <Form
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmitMasatoshi}
                 render={({ handleSubmit, submitting, pristine }) => (
                   <form onSubmit={handleSubmit}>
                     <div>
                       <label>まさとしくんのメッセージ</label>
                       <Field
-                        name="messageMasatoshi"
+                        name="message"
                         render={({ input }) => {
                           return (
                             <TextField
